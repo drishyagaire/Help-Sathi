@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help Sathi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body data-chunk-seconds="{{ chunk_seconds }}">
+  <div class="shell">
+    <header class="hero">
+      <div class="eyebrow">Help Sathi</div>
+      <h1>Transcript First. Emotion Second.</h1>
+      <p class="subcopy">
+        Press once to record a short clip. Transcript screening runs first, and only danger keywords trigger emotion screening and SOS review.
+      </p>
+      <div class="meta-row">
+        <span class="pill"><span class="dot"></span><span id="model-status">Checking model...</span></span>
+        <span class="pill"><span class="dot" id="stt-dot"></span><span id="stt-status">Checking STT...</span></span>
+        <span class="pill" id="chunk-pill">Chunk: {{ chunk_seconds }}s</span>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="panel control-panel">
+        <div class="section-tag">Single Scan</div>
+        <div class="visualizer" id="visualizer"></div>
+        <button class="primary-btn" id="toggle-btn" type="button">Record 5s Scan</button>
+        <p class="helper" id="monitor-state">Mic is idle. Press to record one clip.</p>
+
+        <div class="upload-block">
+          <div class="divider">or test a file</div>
+          <label class="upload-zone" for="file-input">
+            <span class="upload-title">Upload Audio</span>
+            <span class="upload-copy">Run the same transcript gate on a saved clip.</span>
+          </label>
+          <input id="file-input" type="file" accept=".wav,.mp3,.ogg,.flac,.m4a,.webm,.mp4">
+        </div>
+
+        <div class="status-card">
+          <div class="status-line">
+            <span class="label">Device</span>
+            <span id="device-value">{{ device }}</span>
+          </div>
+          <div class="status-line">
+            <span class="label">STT Server</span>
+            <span class="mono truncate">{{ stt_server_url }}</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel transcript-panel">
+        <div class="section-tag">Transcript Feed</div>
+        <div class="error-box" id="error-box"></div>
+        <div class="transcript-log" id="transcript-log">
+          <div class="empty-state">Waiting for audio chunks...</div>
+        </div>
+      </section>
+
+      <section class="panel result-panel">
+        <div class="section-tag">Decision</div>
+        <div class="sos-banner" id="sos-banner">
+          <div class="sos-banner-label">SOS Triggered</div>
+          <div class="sos-banner-copy">Danger keywords and distress emotion detected. Monitoring has been stopped.</div>
+        </div>
+        <div class="decision-card neutral" id="decision-card">
+          <div class="decision-header">
+            <div>
+              <div class="decision-label">Current State</div>
+              <div class="decision-title" id="decision-title">Monitoring Not Started</div>
+            </div>
+            <div class="decision-badge" id="decision-badge">Standby</div>
+          </div>
+
+          <div class="decision-copy" id="decision-copy">
+            Start monitoring to transcribe short chunks and screen for danger phrases.
+          </div>
+
+          <div class="keyword-box" id="keyword-box">
+            <div class="keyword-label">Matched Keywords</div>
+            <div class="keyword-list" id="keyword-list">None</div>
+          </div>
+
+          <div class="transcript-box">
+            <div class="keyword-label">Latest Transcript</div>
+            <div class="transcript-preview" id="latest-transcript">No transcript yet.</div>
+          </div>
+
+          <div class="audio-compare-box">
+            <div class="audio-compare-header">
+              <div class="keyword-label">Audio Compare</div>
+              <div class="filter-chip" id="filter-chip">Filter inactive</div>
+            </div>
+            <div class="audio-compare-grid">
+              <div class="audio-card">
+                <div class="audio-card-label">Original Audio</div>
+                <audio id="original-audio" controls preload="none"></audio>
+              </div>
+              <div class="audio-card">
+                <div class="audio-card-label">Filtered Audio</div>
+                <audio id="filtered-audio" controls preload="none"></audio>
+              </div>
+            </div>
+          </div>
+
+          <div class="emotion-box" id="emotion-box">
+            <div class="emotion-summary">
+              <div>
+                <div class="keyword-label">Emotion Result</div>
+                <div class="emotion-name" id="emotion-name">Not evaluated</div>
+              </div>
+              <div class="emotion-confidence" id="emotion-confidence">0%</div>
+            </div>
+            <div class="emotion-bars" id="emotion-bars"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
